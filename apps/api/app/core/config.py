@@ -41,7 +41,15 @@ class Settings(BaseSettings):
 
     @property
     def cors_origins_list(self) -> list[str]:
-        return [origin.strip() for origin in self.cors_origins.split(",") if origin.strip()]
+        # Normalize: trim whitespace and strip trailing slashes so a value like
+        # "https://app.vercel.app/" still matches the browser Origin header
+        # "https://app.vercel.app" (a very common misconfiguration).
+        origins = []
+        for origin in self.cors_origins.split(","):
+            cleaned = origin.strip().rstrip("/")
+            if cleaned:
+                origins.append(cleaned)
+        return origins
 
 
 @lru_cache
