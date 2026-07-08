@@ -35,7 +35,15 @@ def get_ai_provider() -> AIProvider:
         except Exception as exc:  # pragma: no cover - defensive
             logger.warning("Anthropic provider init failed (%s); using mock AI.", exc)
 
-    if provider not in ("mock", "openai", "anthropic"):
+    if provider == "openrouter" and settings.openrouter_api_key:
+        try:
+            from app.services.ai.openrouter_provider import OpenRouterProvider
+
+            return OpenRouterProvider(api_key=settings.openrouter_api_key, model=model)
+        except Exception as exc:  # pragma: no cover - defensive
+            logger.warning("OpenRouter provider init failed (%s); using mock AI.", exc)
+
+    if provider not in ("mock", "openai", "anthropic", "openrouter"):
         logger.warning("Unknown AI_PROVIDER '%s'; using mock AI.", provider)
     elif provider != "mock":
         logger.info("No API key for '%s'; using deterministic mock AI.", provider)
