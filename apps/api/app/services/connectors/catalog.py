@@ -27,7 +27,7 @@ CONNECTORS: list[dict] = [
     {
         "key": "ai_provider",
         "name": "AI Provider",
-        "description": "Summarize, classify and extract structured data using OpenAI, Anthropic, or the built-in mock.",
+        "description": "Summarize, classify and extract structured data via OpenRouter (any model) or the built-in mock.",
         "category": "ai",
         "status": "active",
         "icon": "sparkles",
@@ -73,11 +73,12 @@ def get_connectors() -> list[dict]:
     for c in CONNECTORS:
         item = dict(c)
         if c["key"] == "ai_provider":
-            has_key = bool(settings.openai_api_key or settings.anthropic_api_key)
+            using_mock = settings.ai_provider != "openrouter" or not settings.openrouter_api_key
             item["detail"] = (
-                f"Provider: {settings.ai_provider}"
-                + ("" if has_key else " — no API key set, using deterministic mock AI")
+                "Using deterministic mock AI"
+                if using_mock
+                else f"Provider: OpenRouter · model {settings.ai_model or 'openai/gpt-4o-mini'}"
             )
-            item["using_mock"] = not has_key or settings.ai_provider == "mock"
+            item["using_mock"] = using_mock
         result.append(item)
     return result

@@ -16,9 +16,8 @@ redis==5.2.1
 psycopg[binary]==3.2.3
 email-validator==2.2.0
 
-# Optional AI providers (app falls back to a deterministic mock if absent/unset)
-openai==1.59.6
-anthropic==0.42.0
+# AI is called via OpenRouter's REST API using httpx (above) — no vendor SDKs.
+# The app falls back to a deterministic mock provider when no key is set.
 
 # Dev / test
 pytest==8.3.4

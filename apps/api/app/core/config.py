@@ -33,11 +33,9 @@ class Settings(BaseSettings):
     redis_url: str = "redis://localhost:6379/0"
     execution_mode: str = "inline"  # inline | celery
 
-    # AI provider
-    ai_provider: str = "mock"  # openai | anthropic | openrouter | mock
+    # AI provider — OpenRouter is the single external backend (mock fallback).
+    ai_provider: str = "mock"  # openrouter | mock
     ai_model: str = ""
-    openai_api_key: str = ""
-    anthropic_api_key: str = ""
     openrouter_api_key: str = ""
 
     @property

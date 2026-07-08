@@ -32,9 +32,9 @@ then connect them.
 > **Free-tier note:** the service sleeps after ~15 min idle, so the first request
 > after a nap takes ~30–60s to wake. Fine for a demo.
 
-**(Optional) real AI:** in the service's **Environment** tab set `AI_PROVIDER=anthropic`
-(or `openai`) and add `ANTHROPIC_API_KEY` / `OPENAI_API_KEY`. Otherwise it runs the
-built-in mock AI.
+**(Optional) real AI:** in the service's **Environment** tab set `AI_PROVIDER=openrouter`,
+add `OPENROUTER_API_KEY` (from <https://openrouter.ai/keys>), and optionally
+`AI_MODEL` (e.g. `openai/gpt-4o-mini`). Otherwise it runs the built-in mock AI.
 
 ---
 

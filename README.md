@@ -25,7 +25,8 @@ Example workflow — **Customer Feedback Triage**:
 > **notification** → **save** the result.
 
 The platform ships with a deterministic **mock AI provider**, so the entire product is fully demoable
-**without any paid API keys**. Drop in an OpenAI or Anthropic key to switch to real models.
+**without any paid API keys**. Drop in a single OpenRouter key to switch to real models
+(OpenAI, Anthropic, Google, Llama, and more — all through one gateway).
 
 ## ✨ Features
 
@@ -49,7 +50,7 @@ The platform ships with a deterministic **mock AI provider**, so the entire prod
 | **Backend**  | FastAPI, Python 3.11, SQLAlchemy 2, Alembic, Pydantic v2, JWT (python-jose), Passlib/bcrypt |
 | **Data**     | PostgreSQL (or SQLite for zero-setup dev), Redis |
 | **Jobs**     | Celery (optional; inline execution by default) |
-| **AI**       | OpenAI, Anthropic, or built-in deterministic Mock provider |
+| **AI**       | OpenRouter (any model via one key) or built-in deterministic Mock provider |
 | **DevOps**   | Docker Compose (Postgres + Redis), `.env` config |
 
 ## 📸 Screenshots
@@ -76,7 +77,7 @@ flowpilot-ai/
 │   │   │   ├── schemas/       # Pydantic request/response models
 │   │   │   ├── api/           # deps + routers (auth, workflows, executions, webhooks, ...)
 │   │   │   ├── services/
-│   │   │   │   ├── ai/         # AIProvider abstraction: mock / openai / anthropic + factory
+│   │   │   │   ├── ai/         # AIProvider abstraction: mock / openrouter + factory
 │   │   │   │   ├── engine/     # step handler registry + execution runner
 │   │   │   │   ├── connectors/ # connector catalog
 │   │   │   │   └── dispatch.py # inline vs. celery dispatch
@@ -185,10 +186,9 @@ and hit **Run Demo Workflow** on the dashboard.
 | `DATABASE_URL` | `sqlite:///./flowpilot.db` | SQLAlchemy DB URL (Postgres supported) |
 | `REDIS_URL` | `redis://localhost:6379/0` | Redis broker/result backend |
 | `EXECUTION_MODE` | `inline` | `inline` (sync) or `celery` (background worker) |
-| `AI_PROVIDER` | `mock` | `openai`, `anthropic`, or `mock` |
-| `AI_MODEL` | _(empty)_ | Override model id (else provider default) |
-| `OPENAI_API_KEY` | _(empty)_ | Enables the OpenAI provider |
-| `ANTHROPIC_API_KEY` | _(empty)_ | Enables the Anthropic provider |
+| `AI_PROVIDER` | `mock` | `openrouter` or `mock` |
+| `AI_MODEL` | `openai/gpt-4o-mini` | OpenRouter model id (`vendor/model` form) |
+| `OPENROUTER_API_KEY` | _(empty)_ | Enables real AI via OpenRouter (else mock) |
 | `CORS_ORIGINS` | `http://localhost:5173,...` | Comma-separated allowed origins |
 
 > If `AI_PROVIDER` is set but no matching key is present, FlowPilot automatically falls back to the
