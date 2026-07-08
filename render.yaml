@@ -1,0 +1,39 @@
+# Render Blueprint — provisions the FlowPilot AI backend + a PostgreSQL database.
+# Deploy: push to GitHub, then in Render click "New +" → "Blueprint" and pick this repo.
+# Docs: https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: flowpilot-api
+    runtime: python
+    rootDir: apps/api
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.9"
+      - key: SECRET_KEY
+        generateValue: true # Render generates a strong secret
+      - key: ENVIRONMENT
+        value: production
+      - key: EXECUTION_MODE
+        value: inline
+      - key: AI_PROVIDER
+        value: mock # change to openai/anthropic and add the key below
+      # - key: OPENAI_API_KEY
+      #   sync: false
+      # - key: ANTHROPIC_API_KEY
+      #   sync: false
+      - key: CORS_ORIGINS
+        sync: false # set to your Vercel URL after the frontend is deployed
+      - key: DATABASE_URL
+        fromDatabase:
+          name: flowpilot-db
+          property: connectionString
+
+databases:
+  - name: flowpilot-db
+    plan: free
+    databaseName: flowpilot
+    user: flowpilot

@@ -1,0 +1,39 @@
+# Infrastructure services for FlowPilot AI (PostgreSQL + Redis).
+# The API and web app are run locally (see README) so you can iterate quickly.
+#
+#   docker compose up -d
+#
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: flowpilot-postgres
+    environment:
+      POSTGRES_USER: flowpilot
+      POSTGRES_PASSWORD: flowpilot
+      POSTGRES_DB: flowpilot
+    ports:
+      - "5432:5432"
+    volumes:
+      - flowpilot_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U flowpilot"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: flowpilot-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - flowpilot_redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  flowpilot_pgdata:
+  flowpilot_redisdata:
