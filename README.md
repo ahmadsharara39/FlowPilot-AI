@@ -6,6 +6,22 @@
 
 Think Zapier / Make / n8n, but simpler and AI-native.
 
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Open_App-4f46e5?style=for-the-badge&logo=vercel&logoColor=white)](https://flow-pilot-ai-omega.vercel.app)
+
+![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3.11-3776AB?logo=python&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?logo=postgresql&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-06B6D4?logo=tailwindcss&logoColor=white)
+
+**🔗 [Try the live app](https://flow-pilot-ai-omega.vercel.app)** — register a free account and hit **Run Demo Workflow**.
+<br/><sub>⏳ Hosted on a free tier — the first request may take ~50s to wake the server.</sub>
+
+<br/>
+
+<img src="docs/hero.png" alt="FlowPilot AI — dashboard" width="880" />
+
 [Features](#-features) · [Tech Stack](#-tech-stack) · [Architecture](#-architecture) · [Quick Start](#-quick-start) · [API](#-api-reference) · [Roadmap](#-future-improvements)
 
 </div>
@@ -41,6 +57,7 @@ The platform ships with a deterministic **mock AI provider**, so the entire prod
 - 🔌 **Connectors page** — active + clearly-labeled "coming soon" integrations
 - 🧪 **Mock AI fallback** — works offline; the UI clearly flags when mock AI is in use
 - 🧵 **Background jobs** — optional Celery + Redis execution mode (inline by default for zero-setup demos)
+- 🎨 **Polished UX** — light/dark theme, mobile-responsive layout, drag-and-drop step reordering, skeleton loaders, error boundaries, and loading/empty/error/success states throughout
 
 ## 🛠 Tech Stack
 
@@ -55,11 +72,24 @@ The platform ships with a deterministic **mock AI provider**, so the entire prod
 
 ## 📸 Screenshots
 
-> _Placeholder — add screenshots/GIFs here._
-
-| Dashboard | Workflow Builder | Execution Detail |
-|-----------|------------------|------------------|
-| `docs/dashboard.png` | `docs/workflow-builder.png` | `docs/execution-detail.png` |
+<table>
+  <tr>
+    <td width="50%"><img src="docs/dashboard.png" alt="Dashboard" /></td>
+    <td width="50%"><img src="docs/workflow-builder.png" alt="Workflow builder" /></td>
+  </tr>
+  <tr>
+    <td align="center"><em>Dashboard — stats, run breakdown & recent activity</em></td>
+    <td align="center"><em>Workflow builder — steps, config & run panel</em></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/execution-detail.png" alt="Execution detail" /></td>
+    <td width="50%"><img src="docs/connectors.png" alt="Connectors" /></td>
+  </tr>
+  <tr>
+    <td align="center"><em>Execution detail — per-step input/output logs</em></td>
+    <td align="center"><em>Connectors — active & upcoming integrations</em></td>
+  </tr>
+</table>
 
 ## 🏗 Architecture
 
@@ -174,8 +204,9 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:5173, sign in with the demo credentials (or click **Use demo credentials**),
-and hit **Run Demo Workflow** on the dashboard.
+Open http://localhost:5173, sign in with the seeded demo credentials
+(`demo@flowpilot.ai` / `demo1234`) — or register a new account — and hit
+**Run Demo Workflow** on the dashboard.
 
 ## 🔑 Environment Variables
 
@@ -268,6 +299,17 @@ classification, the generated Slack notification, and the saved result — with 
 | 2 | Classify urgency | `ai_classify` | `urgent_bug` / `feature_request` / `billing_issue` / `general_feedback` |
 | 3 | Notify support channel | `slack_webhook_mock` | Builds a Slack-style notification |
 | 4 | Save triage result | `save_result` | Persists the final output |
+
+## 🌐 Deployment
+
+The live demo runs a split deployment:
+
+- **Frontend** → **Vercel** (static Vite build + global CDN)
+- **Backend + PostgreSQL** → **Render** (a `render.yaml` blueprint provisions both)
+
+Full step-by-step instructions are in **[DEPLOYMENT.md](DEPLOYMENT.md)**. In production the app boots
+only with a strong `SECRET_KEY`, normalizes managed-Postgres URLs for `psycopg`, and reads its allowed
+origins from `CORS_ORIGINS`.
 
 ## 🔭 Future Improvements
 
