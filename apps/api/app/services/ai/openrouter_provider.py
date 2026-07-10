@@ -33,7 +33,14 @@ class OpenRouterProvider(AIProvider):
         super().__init__(model=model or DEFAULT_MODEL, is_mock=False)
         self._api_key = api_key
 
-    def _chat(self, prompt: str) -> str:
+    def _post(self, prompt: str, response_format: dict | None = None) -> str:
+        body: dict = {
+            "model": self.model,
+            "messages": [{"role": "user", "content": prompt}],
+            "temperature": 0.2,
+        }
+        if response_format is not None:
+            body["response_format"] = response_format
         resp = httpx.post(
             f"{OPENROUTER_BASE_URL}/chat/completions",
             headers={
@@ -43,16 +50,44 @@ class OpenRouterProvider(AIProvider):
                 "HTTP-Referer": "https://github.com/ahmadsharara39/FlowPilot-AI",
                 "X-Title": "FlowPilot AI",
             },
-            json={
-                "model": self.model,
-                "messages": [{"role": "user", "content": prompt}],
-                "temperature": 0.2,
-            },
-            timeout=60,
+            json=body,
+            timeout=90,
         )
         resp.raise_for_status()
         data = resp.json()
         return (data["choices"][0]["message"]["content"] or "").strip()
+
+    def _chat(self, prompt: str, attempts: int = 2) -> str:
+        """Plain completion. Retries once on empty output (free 'reasoning'
+        models sometimes spend their whole budget thinking and return nothing;
+        the free auto-router may pick a better model on the next call)."""
+        raw = ""
+        for _ in range(attempts):
+            raw = self._post(prompt)
+            if raw:
+                return raw
+        return raw
+
+    def _chat_json(self, prompt: str) -> dict:
+        """Completion that must parse as JSON. Requests JSON mode first (helps
+        capable models), falls back to a plain retry if a routed model rejects
+        it or returns unparseable text. Raises if every attempt fails."""
+        last = ""
+        for attempt in range(2):
+            rf = {"type": "json_object"} if attempt == 0 else None
+            try:
+                raw = self._post(prompt, response_format=rf)
+            except httpx.HTTPStatusError:
+                # e.g. the routed free model doesn't support response_format.
+                continue
+            if not raw:
+                continue
+            last = raw
+            try:
+                return safe_json_loads(raw)
+            except Exception:
+                continue
+        raise ValueError(last or "empty response")
 
     def _result(self, data) -> AIResult:
         return AIResult(data=data, provider=self.name, model=self.model, is_mock=False)
@@ -61,21 +96,19 @@ class OpenRouterProvider(AIProvider):
         return self._result(self._chat(summarize_prompt(text)))
 
     def classify(self, text: str, categories: list[str]) -> AIResult:
-        raw = self._chat(classify_prompt(text, categories))
         try:
-            data = safe_json_loads(raw)
-        except Exception:
+            data = self._chat_json(classify_prompt(text, categories))
+        except Exception as exc:
             data = {
                 "category": categories[-1] if categories else "unknown",
                 "confidence": 0.0,
-                "explanation": raw[:200],
+                "explanation": f"model returned no usable JSON ({str(exc)[:120]})",
             }
         return self._result(data)
 
     def extract_json(self, text: str, schema_description: str) -> AIResult:
-        raw = self._chat(extract_prompt(text, schema_description))
         try:
-            data = safe_json_loads(raw)
+            data = self._chat_json(extract_prompt(text, schema_description))
         except Exception:
-            data = {"_raw": raw[:500], "_error": "could not parse JSON"}
+            data = {"_error": "model returned no usable JSON"}
         return self._result(data)
