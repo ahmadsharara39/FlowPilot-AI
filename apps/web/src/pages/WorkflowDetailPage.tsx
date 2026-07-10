@@ -457,7 +457,7 @@ function RunPanel({
         onClick={() => run.mutate()}
       >
         {run.isPending ? <Spinner className="h-4 w-4 text-white" /> : <Icon name="play" width={16} height={16} />}
-        Run workflow
+        {run.isPending ? "Running… (~15s on free AI)" : "Run workflow"}
       </button>
       {wf.steps.length === 0 && (
         <p className="mt-2 text-center text-xs text-slate-400">Add at least one step to run.</p>

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { requestEnded, requestStarted } from "./slowRequest";
 
 const TOKEN_KEY = "flowpilot_token";
 
@@ -26,6 +27,7 @@ export const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
+  requestStarted();
   const token = getToken();
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -34,8 +36,12 @@ api.interceptors.request.use((config) => {
 });
 
 api.interceptors.response.use(
-  (res) => res,
+  (res) => {
+    requestEnded();
+    return res;
+  },
   (error) => {
+    requestEnded();
     // On auth failure, drop the token so the app redirects to login.
     if (error?.response?.status === 401 && getToken()) {
       clearToken();
