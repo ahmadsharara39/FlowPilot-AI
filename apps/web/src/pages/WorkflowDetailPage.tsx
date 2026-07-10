@@ -453,7 +453,7 @@ function WebhookCard({ wf, onRefetch }: { wf: Workflow; onRefetch: () => void })
       <p className="text-xs text-slate-500 dark:text-slate-400">POST any JSON payload to this URL to run the workflow.</p>
       <div className="mt-3 flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 p-2">
         <code className="min-w-0 flex-1 truncate text-xs text-slate-600 dark:text-slate-300">{url}</code>
-        <button onClick={copy} className="rounded p-1 text-slate-400 dark:text-slate-500 hover:bg-slate-200 hover:text-slate-700 dark:hover:text-slate-200" title="Copy">
+        <button onClick={copy} className="rounded p-1 text-slate-400 dark:text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-slate-700 dark:hover:text-slate-200" title="Copy">
           <Icon name="copy" width={16} height={16} />
         </button>
       </div>

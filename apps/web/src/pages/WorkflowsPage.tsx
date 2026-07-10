@@ -56,7 +56,7 @@ export default function WorkflowsPage() {
                 </span>
                 <StatusBadge status={wf.status} />
               </div>
-              <h3 className="mt-4 font-semibold text-slate-900 dark:text-white group-hover:text-brand-700">
+              <h3 className="mt-4 font-semibold text-slate-900 dark:text-white group-hover:text-brand-700 dark:group-hover:text-brand-400">
                 {wf.name}
               </h3>
               <p className="mt-1 line-clamp-2 h-10 text-sm text-slate-500 dark:text-slate-400">

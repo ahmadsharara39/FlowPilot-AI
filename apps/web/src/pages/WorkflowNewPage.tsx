@@ -80,7 +80,7 @@ export default function WorkflowNewPage() {
                   className={clsx(
                     "flex items-start gap-3 rounded-lg border p-4 text-left transition-colors",
                     trigger === t
-                      ? "border-brand-500 bg-brand-50 ring-1 ring-brand-500"
+                      ? "border-brand-500 bg-brand-50 ring-1 ring-brand-500 dark:bg-brand-500/10"
                       : "border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-600"
                   )}
                 >

@@ -12,7 +12,7 @@ export function EmptyState({
   icon?: string;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-300 bg-white/60 px-6 py-14 text-center">
+    <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-300 bg-white/60 px-6 py-14 text-center dark:border-slate-700 dark:bg-slate-900/60">
       <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-brand-50 text-2xl">
         {icon}
       </div>
