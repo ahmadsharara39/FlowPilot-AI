@@ -187,7 +187,7 @@ and hit **Run Demo Workflow** on the dashboard.
 | `REDIS_URL` | `redis://localhost:6379/0` | Redis broker/result backend |
 | `EXECUTION_MODE` | `inline` | `inline` (sync) or `celery` (background worker) |
 | `AI_PROVIDER` | `mock` | `openrouter` or `mock` |
-| `AI_MODEL` | `openai/gpt-4o-mini` | OpenRouter model id (`vendor/model` form) |
+| `AI_MODEL` | `openrouter/free` | OpenRouter model id; default auto-picks a free model |
 | `OPENROUTER_API_KEY` | _(empty)_ | Enables real AI via OpenRouter (else mock) |
 | `CORS_ORIGINS` | `http://localhost:5173,...` | Comma-separated allowed origins |
 

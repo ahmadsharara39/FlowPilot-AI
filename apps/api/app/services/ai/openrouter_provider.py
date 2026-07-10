@@ -20,7 +20,10 @@ from app.services.ai.prompts import (
 )
 
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
-DEFAULT_MODEL = "openai/gpt-4o-mini"
+# "openrouter/free" is OpenRouter's auto-router that picks an available *free*
+# model — so real AI runs at zero cost out of the box. Override with AI_MODEL
+# (e.g. openai/gpt-4o-mini) for more consistent quality.
+DEFAULT_MODEL = "openrouter/free"
 
 
 class OpenRouterProvider(AIProvider):
