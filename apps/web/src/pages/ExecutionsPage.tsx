@@ -2,16 +2,26 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { executionApi } from "../api/endpoints";
 import { StatusBadge } from "../components/StatusBadge";
-import { LoadingScreen } from "../components/Spinner";
+import { SkeletonRows } from "../components/Skeleton";
 import { EmptyState } from "../components/EmptyState";
 import { Icon } from "../components/Icon";
-import { durationMs, formatDate } from "../utils/format";
+import { durationMs, formatDate, formatRelative } from "../utils/format";
 
 export default function ExecutionsPage() {
   const navigate = useNavigate();
   const { data, isLoading } = useQuery({ queryKey: ["executions"], queryFn: () => executionApi.list() });
 
-  if (isLoading) return <LoadingScreen />;
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white">Executions</h2>
+          <p className="text-sm text-slate-500 dark:text-slate-400">Every workflow run, with status and timing.</p>
+        </div>
+        <SkeletonRows rows={6} />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -59,7 +69,12 @@ export default function ExecutionsPage() {
                       </span>
                     </td>
                     <td className="px-5 py-3 text-slate-500 dark:text-slate-400">{durationMs(ex.started_at, ex.finished_at)}</td>
-                    <td className="px-5 py-3 text-slate-500 dark:text-slate-400">{formatDate(ex.started_at ?? ex.created_at)}</td>
+                    <td
+                      className="px-5 py-3 text-slate-500 dark:text-slate-400"
+                      title={formatDate(ex.started_at ?? ex.created_at)}
+                    >
+                      {formatRelative(ex.started_at ?? ex.created_at)}
+                    </td>
                   </tr>
                 ))}
               </tbody>

@@ -10,6 +10,7 @@ import { EmptyState } from "../components/EmptyState";
 import { Icon } from "../components/Icon";
 import { StatusBadge } from "../components/StatusBadge";
 import { StepConfigFields } from "../components/StepConfigFields";
+import { useConfirm } from "../hooks/useConfirm";
 import { STEP_TYPES, defaultConfig, stepMeta } from "../utils/stepMeta";
 import { prettyJson } from "../utils/format";
 import type { StepType, Workflow, WorkflowStep } from "../types";
@@ -42,6 +43,7 @@ function WorkflowEditor({
   navigate: ReturnType<typeof useNavigate>;
   qc: ReturnType<typeof useQueryClient>;
 }) {
+  const confirm = useConfirm();
   const [name, setName] = useState(wf.name);
   const [description, setDescription] = useState(wf.description);
   const [status, setStatus] = useState(wf.status);
@@ -113,8 +115,14 @@ function WorkflowEditor({
         <div className="flex items-center gap-2">
           <button
             className="btn-danger"
-            onClick={() => {
-              if (confirm("Delete this workflow and all its executions?")) removeWorkflow.mutate();
+            onClick={async () => {
+              const ok = await confirm({
+                title: "Delete workflow?",
+                message: "This permanently deletes the workflow and all its executions.",
+                confirmLabel: "Delete",
+                danger: true,
+              });
+              if (ok) removeWorkflow.mutate();
             }}
           >
             <Icon name="trash" width={16} height={16} />
@@ -256,6 +264,7 @@ function StepCard({
   onMove: (dir: -1 | 1) => void;
   moving: boolean;
 }) {
+  const confirm = useConfirm();
   const [open, setOpen] = useState(false);
   const [config, setConfig] = useState<Record<string, unknown>>(step.config ?? {});
   const meta = stepMeta(step.step_type);
@@ -313,8 +322,16 @@ function StepCard({
             <Icon name="settings" width={16} height={16} />
           </button>
           <button
-            onClick={() => remove.mutate()}
-            className="rounded p-1 text-red-400 hover:bg-red-50 hover:text-red-600"
+            onClick={async () => {
+              const ok = await confirm({
+                title: "Remove step?",
+                message: `Remove "${step.name}" from this workflow?`,
+                confirmLabel: "Remove",
+                danger: true,
+              });
+              if (ok) remove.mutate();
+            }}
+            className="rounded p-1 text-red-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-500/10"
             title="Delete step"
           >
             <Icon name="trash" width={16} height={16} />

@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { workflowApi } from "../api/endpoints";
 import { StatusBadge } from "../components/StatusBadge";
-import { LoadingScreen } from "../components/Spinner";
+import { SkeletonCard } from "../components/Skeleton";
 import { EmptyState } from "../components/EmptyState";
 import { Icon } from "../components/Icon";
 import { formatDate } from "../utils/format";
@@ -10,8 +10,6 @@ import { formatDate } from "../utils/format";
 export default function WorkflowsPage() {
   const navigate = useNavigate();
   const { data, isLoading } = useQuery({ queryKey: ["workflows"], queryFn: workflowApi.list });
-
-  if (isLoading) return <LoadingScreen />;
 
   return (
     <div className="space-y-6">
@@ -26,7 +24,13 @@ export default function WorkflowsPage() {
         </Link>
       </div>
 
-      {!data || data.length === 0 ? (
+      {isLoading ? (
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <SkeletonCard key={i} />
+          ))}
+        </div>
+      ) : !data || data.length === 0 ? (
         <EmptyState
           icon="🛠️"
           title="No workflows yet"

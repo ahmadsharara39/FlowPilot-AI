@@ -14,10 +14,11 @@ import {
 import { dashboardApi, executionApi, workflowApi } from "../api/endpoints";
 import { apiError } from "../api/client";
 import { StatusBadge } from "../components/StatusBadge";
-import { LoadingScreen, Spinner } from "../components/Spinner";
+import { Spinner } from "../components/Spinner";
+import { Skeleton, SkeletonCard } from "../components/Skeleton";
 import { EmptyState } from "../components/EmptyState";
 import { Icon } from "../components/Icon";
-import { formatDate } from "../utils/format";
+import { formatDate, formatRelative } from "../utils/format";
 import { DEMO_WORKFLOW_NAME, ensureDemoWorkflow, DEMO_INPUT } from "../utils/demo";
 
 function StatCard({
@@ -77,7 +78,23 @@ export default function DashboardPage() {
     onSettled: () => setRunningDemo(false),
   });
 
-  if (stats.isLoading) return <LoadingScreen />;
+  if (stats.isLoading) {
+    return (
+      <div className="space-y-6">
+        <Skeleton className="h-28 w-full rounded-xl" />
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <SkeletonCard key={i} lines={1} />
+          ))}
+        </div>
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+          <SkeletonCard lines={5} />
+          <SkeletonCard lines={5} />
+          <SkeletonCard lines={5} />
+        </div>
+      </div>
+    );
+  }
 
   const s = stats.data!;
   const recent = executions.data?.slice(0, 6) ?? [];
@@ -183,7 +200,12 @@ export default function DashboardPage() {
                         <StatusBadge status={ex.status} />
                       </td>
                       <td className="px-5 py-3 text-slate-500 dark:text-slate-400">{ex.trigger_source}</td>
-                      <td className="px-5 py-3 text-slate-500 dark:text-slate-400">{formatDate(ex.created_at)}</td>
+                      <td
+                        className="px-5 py-3 text-slate-500 dark:text-slate-400"
+                        title={formatDate(ex.created_at)}
+                      >
+                        {formatRelative(ex.created_at)}
+                      </td>
                     </tr>
                   ))}
                 </tbody>

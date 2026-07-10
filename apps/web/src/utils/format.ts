@@ -9,6 +9,21 @@ export function formatDate(value: string | null | undefined): string {
   });
 }
 
+export function formatRelative(value: string | null | undefined): string {
+  if (!value) return "—";
+  const then = new Date(value).getTime();
+  const secs = Math.round((Date.now() - then) / 1000);
+  if (!Number.isFinite(secs)) return "—";
+  if (secs < 45) return "just now";
+  const mins = Math.round(secs / 60);
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.round(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.round(hrs / 24);
+  if (days < 30) return `${days}d ago`;
+  return formatDate(value);
+}
+
 export function durationMs(start: string | null, end: string | null): string {
   if (!start || !end) return "—";
   const ms = new Date(end).getTime() - new Date(start).getTime();
