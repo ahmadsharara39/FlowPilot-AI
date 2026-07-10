@@ -17,7 +17,7 @@ export default function LoginPage() {
   const { user, login } = useAuth();
   const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
-  const { register, handleSubmit, setValue, formState: { errors } } = useForm<Form>();
+  const { register, handleSubmit, formState: { errors } } = useForm<Form>();
 
   if (user) return <Navigate to="/dashboard" replace />;
 
@@ -32,11 +32,6 @@ export default function LoginPage() {
     } finally {
       setSubmitting(false);
     }
-  };
-
-  const useDemo = () => {
-    setValue("email", "demo@flowpilot.ai");
-    setValue("password", "demo1234");
   };
 
   return (
@@ -69,10 +64,6 @@ export default function LoginPage() {
           Sign in
         </button>
       </form>
-
-      <button onClick={useDemo} className="btn-secondary mt-3 w-full text-xs">
-        Use demo credentials
-      </button>
 
       <p className="mt-6 text-center text-sm text-slate-500">
         No account?{" "}
