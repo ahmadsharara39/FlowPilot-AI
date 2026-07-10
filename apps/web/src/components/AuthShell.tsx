@@ -52,10 +52,10 @@ export function AuthShell({
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600 text-white">
               <Icon name="bolt" width={18} height={18} />
             </div>
-            <span className="text-lg font-bold text-slate-900">FlowPilot AI</span>
+            <span className="text-lg font-bold text-slate-900 dark:text-white">FlowPilot AI</span>
           </div>
-          <h1 className="text-2xl font-bold text-slate-900">{title}</h1>
-          <p className="mt-1 text-sm text-slate-500">{subtitle}</p>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">{title}</h1>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{subtitle}</p>
           <div className="mt-8">{children}</div>
         </div>
       </div>

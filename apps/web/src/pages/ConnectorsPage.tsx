@@ -26,14 +26,14 @@ export default function ConnectorsPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-xl font-bold text-slate-900">Connectors</h2>
-        <p className="text-sm text-slate-500">
+        <h2 className="text-xl font-bold text-slate-900 dark:text-white">Connectors</h2>
+        <p className="text-sm text-slate-500 dark:text-slate-400">
           Integrations that power your workflow triggers and actions.
         </p>
       </div>
 
       <section>
-        <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">Active</h3>
+        <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">Active</h3>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {active.map((c) => (
             <ConnectorCard key={c.key} connector={c} />
@@ -42,7 +42,7 @@ export default function ConnectorsPage() {
       </section>
 
       <section>
-        <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">Coming soon</h3>
+        <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">Coming soon</h3>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {soon.map((c) => (
             <ConnectorCard key={c.key} connector={c} />
@@ -61,7 +61,7 @@ function ConnectorCard({ connector }: { connector: Connector }) {
         <span
           className={clsx(
             "flex h-11 w-11 items-center justify-center rounded-xl",
-            isActive ? "bg-brand-50 text-brand-600" : "bg-slate-100 text-slate-400"
+            isActive ? "bg-brand-50 text-brand-600" : "bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500"
           )}
         >
           <Icon name={ICONS[connector.icon] ?? "connectors"} />
@@ -72,11 +72,11 @@ function ConnectorCard({ connector }: { connector: Connector }) {
             Active
           </span>
         ) : (
-          <span className="badge bg-slate-100 text-slate-500">Coming soon</span>
+          <span className="badge bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">Coming soon</span>
         )}
       </div>
-      <h4 className="mt-4 font-semibold text-slate-900">{connector.name}</h4>
-      <p className="mt-1 text-sm text-slate-500">{connector.description}</p>
+      <h4 className="mt-4 font-semibold text-slate-900 dark:text-white">{connector.name}</h4>
+      <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{connector.description}</p>
       {connector.detail && (
         <p
           className={clsx(
@@ -87,7 +87,7 @@ function ConnectorCard({ connector }: { connector: Connector }) {
           {connector.detail}
         </p>
       )}
-      <div className="mt-4 flex items-center gap-2 border-t border-slate-100 pt-3 text-xs text-slate-400">
+      <div className="mt-4 flex items-center gap-2 border-t border-slate-100 dark:border-slate-800 pt-3 text-xs text-slate-400 dark:text-slate-500">
         <span className="capitalize">{connector.category}</span>
       </div>
     </div>

@@ -6,7 +6,10 @@ import { Toaster } from "react-hot-toast";
 import App from "./App";
 import { AuthProvider } from "./hooks/useAuth";
 import { SlowRequestBanner } from "./components/SlowRequestBanner";
+import { initTheme } from "./hooks/useTheme";
 import "./index.css";
+
+initTheme();
 
 const queryClient = new QueryClient({
   defaultOptions: {

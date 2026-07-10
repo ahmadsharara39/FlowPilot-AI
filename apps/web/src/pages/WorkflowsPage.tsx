@@ -17,8 +17,8 @@ export default function WorkflowsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-bold text-slate-900">Workflows</h2>
-          <p className="text-sm text-slate-500">Create and manage your automation workflows.</p>
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white">Workflows</h2>
+          <p className="text-sm text-slate-500 dark:text-slate-400">Create and manage your automation workflows.</p>
         </div>
         <Link to="/workflows/new" className="btn-primary">
           <Icon name="plus" width={16} height={16} />
@@ -52,13 +52,13 @@ export default function WorkflowsPage() {
                 </span>
                 <StatusBadge status={wf.status} />
               </div>
-              <h3 className="mt-4 font-semibold text-slate-900 group-hover:text-brand-700">
+              <h3 className="mt-4 font-semibold text-slate-900 dark:text-white group-hover:text-brand-700">
                 {wf.name}
               </h3>
-              <p className="mt-1 line-clamp-2 h-10 text-sm text-slate-500">
+              <p className="mt-1 line-clamp-2 h-10 text-sm text-slate-500 dark:text-slate-400">
                 {wf.description || "No description"}
               </p>
-              <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3 text-xs text-slate-400">
+              <div className="mt-4 flex items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-3 text-xs text-slate-400 dark:text-slate-500">
                 <span className="inline-flex items-center gap-1">
                   <Icon name={wf.trigger_type === "webhook" ? "webhook" : "play"} width={14} height={14} />
                   {wf.trigger_type}

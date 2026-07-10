@@ -34,10 +34,10 @@ function StatCard({
   return (
     <div className="card p-5">
       <div className="flex items-center justify-between">
-        <span className="text-sm font-medium text-slate-500">{label}</span>
+        <span className="text-sm font-medium text-slate-500 dark:text-slate-400">{label}</span>
         <span className={`flex h-9 w-9 items-center justify-center rounded-lg ${tone}`}>{icon}</span>
       </div>
-      <p className="mt-3 text-3xl font-bold text-slate-900">{value}</p>
+      <p className="mt-3 text-3xl font-bold text-slate-900 dark:text-white">{value}</p>
     </div>
   );
 }
@@ -120,25 +120,25 @@ export default function DashboardPage() {
         <StatCard
           label="Workflows"
           value={s.workflow_count}
-          tone="bg-brand-50 text-brand-600"
+          tone="bg-brand-50 text-brand-600 dark:bg-brand-500/15 dark:text-brand-300"
           icon={<Icon name="workflows" width={18} height={18} />}
         />
         <StatCard
           label="Successful Runs"
           value={s.successful_runs}
-          tone="bg-emerald-50 text-emerald-600"
+          tone="bg-emerald-50 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-300"
           icon={<Icon name="check" width={18} height={18} />}
         />
         <StatCard
           label="Failed Runs"
           value={s.failed_runs}
-          tone="bg-red-50 text-red-600"
+          tone="bg-red-50 text-red-600 dark:bg-red-500/15 dark:text-red-300"
           icon={<Icon name="executions" width={18} height={18} />}
         />
         <StatCard
           label="Success Rate"
           value={`${s.success_rate}%`}
-          tone="bg-amber-50 text-amber-600"
+          tone="bg-amber-50 text-amber-600 dark:bg-amber-500/15 dark:text-amber-300"
           icon={<Icon name="sparkles" width={18} height={18} />}
         />
       </div>
@@ -146,8 +146,8 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Recent executions */}
         <div className="card lg:col-span-2">
-          <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4">
-            <h3 className="font-semibold text-slate-800">Recent Executions</h3>
+          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 px-5 py-4">
+            <h3 className="font-semibold text-slate-800 dark:text-slate-100">Recent Executions</h3>
             <Link to="/executions" className="text-sm font-medium text-brand-600 hover:text-brand-700">
               View all
             </Link>
@@ -163,7 +163,7 @@ export default function DashboardPage() {
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="text-left text-xs uppercase tracking-wide text-slate-400">
+                <thead className="text-left text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500">
                   <tr>
                     <th className="px-5 py-3 font-medium">Workflow</th>
                     <th className="px-5 py-3 font-medium">Status</th>
@@ -171,19 +171,19 @@ export default function DashboardPage() {
                     <th className="px-5 py-3 font-medium">When</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                   {recent.map((ex) => (
                     <tr
                       key={ex.id}
-                      className="cursor-pointer hover:bg-slate-50"
+                      className="cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50"
                       onClick={() => navigate(`/executions/${ex.id}`)}
                     >
-                      <td className="px-5 py-3 font-medium text-slate-800">{ex.workflow_name}</td>
+                      <td className="px-5 py-3 font-medium text-slate-800 dark:text-slate-100">{ex.workflow_name}</td>
                       <td className="px-5 py-3">
                         <StatusBadge status={ex.status} />
                       </td>
-                      <td className="px-5 py-3 text-slate-500">{ex.trigger_source}</td>
-                      <td className="px-5 py-3 text-slate-500">{formatDate(ex.created_at)}</td>
+                      <td className="px-5 py-3 text-slate-500 dark:text-slate-400">{ex.trigger_source}</td>
+                      <td className="px-5 py-3 text-slate-500 dark:text-slate-400">{formatDate(ex.created_at)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -194,11 +194,11 @@ export default function DashboardPage() {
 
         {/* Chart */}
         <div className="card p-5">
-          <h3 className="font-semibold text-slate-800">Run Breakdown</h3>
-          <p className="text-xs text-slate-400">Across {s.total_runs} total runs</p>
+          <h3 className="font-semibold text-slate-800 dark:text-slate-100">Run Breakdown</h3>
+          <p className="text-xs text-slate-400 dark:text-slate-500">Across {s.total_runs} total runs</p>
           <div className="mt-4 h-56">
             {s.total_runs === 0 ? (
-              <div className="flex h-full items-center justify-center text-sm text-slate-400">
+              <div className="flex h-full items-center justify-center text-sm text-slate-400 dark:text-slate-500">
                 No data yet
               </div>
             ) : (
@@ -206,7 +206,7 @@ export default function DashboardPage() {
                 <BarChart data={chartData}>
                   <XAxis dataKey="name" tick={{ fontSize: 12, fill: "#64748b" }} axisLine={false} tickLine={false} />
                   <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: "#64748b" }} axisLine={false} tickLine={false} width={24} />
-                  <Tooltip cursor={{ fill: "#f1f5f9" }} />
+                  <Tooltip cursor={{ fill: "rgba(100,116,139,0.15)" }} />
                   <Bar dataKey="value" radius={[6, 6, 0, 0]}>
                     {chartData.map((entry) => (
                       <Cell key={entry.name} fill={entry.fill} />
@@ -222,26 +222,26 @@ export default function DashboardPage() {
       {/* Workflows quick list */}
       {workflows.data && workflows.data.length > 0 && (
         <div className="card">
-          <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4">
-            <h3 className="font-semibold text-slate-800">Your Workflows</h3>
+          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 px-5 py-4">
+            <h3 className="font-semibold text-slate-800 dark:text-slate-100">Your Workflows</h3>
             <Link to="/workflows" className="text-sm font-medium text-brand-600 hover:text-brand-700">
               Manage
             </Link>
           </div>
-          <ul className="divide-y divide-slate-100">
+          <ul className="divide-y divide-slate-100 dark:divide-slate-800">
             {workflows.data.slice(0, 5).map((wf) => (
               <li key={wf.id}>
                 <Link
                   to={`/workflows/${wf.id}`}
-                  className="flex items-center justify-between px-5 py-3 hover:bg-slate-50"
+                  className="flex items-center justify-between px-5 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50"
                 >
                   <div className="flex items-center gap-3">
                     <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
                       <Icon name="workflows" width={16} height={16} />
                     </span>
                     <div>
-                      <p className="font-medium text-slate-800">{wf.name}</p>
-                      <p className="text-xs text-slate-400">
+                      <p className="font-medium text-slate-800 dark:text-slate-100">{wf.name}</p>
+                      <p className="text-xs text-slate-400 dark:text-slate-500">
                         {wf.step_count} steps · {wf.trigger_type}
                         {wf.name === DEMO_WORKFLOW_NAME ? " · demo" : ""}
                       </p>

@@ -16,8 +16,8 @@ export default function ExecutionsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-xl font-bold text-slate-900">Executions</h2>
-        <p className="text-sm text-slate-500">Every workflow run, with status and timing.</p>
+        <h2 className="text-xl font-bold text-slate-900 dark:text-white">Executions</h2>
+        <p className="text-sm text-slate-500 dark:text-slate-400">Every workflow run, with status and timing.</p>
       </div>
 
       {!data || data.length === 0 ? (
@@ -30,7 +30,7 @@ export default function ExecutionsPage() {
         <div className="card overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="border-b border-slate-100 text-left text-xs uppercase tracking-wide text-slate-400">
+              <thead className="border-b border-slate-100 dark:border-slate-800 text-left text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500">
                 <tr>
                   <th className="px-5 py-3 font-medium">ID</th>
                   <th className="px-5 py-3 font-medium">Workflow</th>
@@ -40,26 +40,26 @@ export default function ExecutionsPage() {
                   <th className="px-5 py-3 font-medium">Started</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                 {data.map((ex) => (
                   <tr
                     key={ex.id}
-                    className="cursor-pointer hover:bg-slate-50"
+                    className="cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50"
                     onClick={() => navigate(`/executions/${ex.id}`)}
                   >
-                    <td className="px-5 py-3 font-mono text-xs text-slate-400">#{ex.id}</td>
-                    <td className="px-5 py-3 font-medium text-slate-800">{ex.workflow_name}</td>
+                    <td className="px-5 py-3 font-mono text-xs text-slate-400 dark:text-slate-500">#{ex.id}</td>
+                    <td className="px-5 py-3 font-medium text-slate-800 dark:text-slate-100">{ex.workflow_name}</td>
                     <td className="px-5 py-3">
                       <StatusBadge status={ex.status} />
                     </td>
                     <td className="px-5 py-3">
-                      <span className="inline-flex items-center gap-1 text-slate-500">
+                      <span className="inline-flex items-center gap-1 text-slate-500 dark:text-slate-400">
                         <Icon name={ex.trigger_source === "webhook" ? "webhook" : "play"} width={14} height={14} />
                         {ex.trigger_source}
                       </span>
                     </td>
-                    <td className="px-5 py-3 text-slate-500">{durationMs(ex.started_at, ex.finished_at)}</td>
-                    <td className="px-5 py-3 text-slate-500">{formatDate(ex.started_at ?? ex.created_at)}</td>
+                    <td className="px-5 py-3 text-slate-500 dark:text-slate-400">{durationMs(ex.started_at, ex.finished_at)}</td>
+                    <td className="px-5 py-3 text-slate-500 dark:text-slate-400">{formatDate(ex.started_at ?? ex.created_at)}</td>
                   </tr>
                 ))}
               </tbody>

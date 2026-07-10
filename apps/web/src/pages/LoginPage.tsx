@@ -65,7 +65,7 @@ export default function LoginPage() {
         </button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-slate-500">
+      <p className="mt-6 text-center text-sm text-slate-500 dark:text-slate-400">
         No account?{" "}
         <Link to="/register" className="font-semibold text-brand-600 hover:text-brand-700">
           Create one

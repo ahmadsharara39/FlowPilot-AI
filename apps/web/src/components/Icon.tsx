@@ -21,7 +21,10 @@ type IconName =
   | "check"
   | "arrow-up"
   | "arrow-down"
-  | "bolt";
+  | "bolt"
+  | "sun"
+  | "moon"
+  | "grip";
 
 const PATHS: Record<IconName, string> = {
   dashboard: "M4 13h6V4H4v9zm0 7h6v-5H4v5zm10 0h6V11h-6v9zm0-16v5h6V4h-6z",
@@ -46,6 +49,9 @@ const PATHS: Record<IconName, string> = {
   "arrow-up": "M5 15l7-7 7 7",
   "arrow-down": "M19 9l-7 7-7-7",
   bolt: "M13 10V3L4 14h7v7l9-11h-7z",
+  sun: "M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z",
+  moon: "M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z",
+  grip: "M9 6h.01M9 12h.01M9 18h.01M15 6h.01M15 12h.01M15 18h.01",
 };
 
 interface IconProps extends SVGProps<SVGSVGElement> {

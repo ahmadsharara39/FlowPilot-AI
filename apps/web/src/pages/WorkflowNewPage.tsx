@@ -39,13 +39,13 @@ export default function WorkflowNewPage() {
 
   return (
     <div className="mx-auto max-w-2xl space-y-6">
-      <Link to="/workflows" className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-slate-700">
+      <Link to="/workflows" className="inline-flex items-center gap-1 text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
         ← Back to workflows
       </Link>
 
       <div className="card p-6">
-        <h2 className="text-xl font-bold text-slate-900">Create a workflow</h2>
-        <p className="mt-1 text-sm text-slate-500">
+        <h2 className="text-xl font-bold text-slate-900 dark:text-white">Create a workflow</h2>
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
           Give it a name and pick how it will be triggered. You'll add steps next.
         </p>
 
@@ -81,20 +81,20 @@ export default function WorkflowNewPage() {
                     "flex items-start gap-3 rounded-lg border p-4 text-left transition-colors",
                     trigger === t
                       ? "border-brand-500 bg-brand-50 ring-1 ring-brand-500"
-                      : "border-slate-200 hover:border-slate-300"
+                      : "border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-600"
                   )}
                 >
                   <span
                     className={clsx(
                       "flex h-9 w-9 items-center justify-center rounded-lg",
-                      trigger === t ? "bg-brand-600 text-white" : "bg-slate-100 text-slate-500"
+                      trigger === t ? "bg-brand-600 text-white" : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400"
                     )}
                   >
                     <Icon name={t === "webhook" ? "webhook" : "play"} width={18} height={18} />
                   </span>
                   <div>
-                    <p className="text-sm font-semibold capitalize text-slate-800">{t}</p>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-sm font-semibold capitalize text-slate-800 dark:text-slate-100">{t}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
                       {t === "manual"
                         ? "Run on demand from the dashboard."
                         : "Trigger via a unique webhook URL."}

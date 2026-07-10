@@ -107,7 +107,7 @@ function WorkflowEditor({
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <Link to="/workflows" className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-slate-700">
+        <Link to="/workflows" className="inline-flex items-center gap-1 text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
           ← Back to workflows
         </Link>
         <div className="flex items-center gap-2">
@@ -128,7 +128,7 @@ function WorkflowEditor({
         <div className="space-y-6 lg:col-span-2">
           <div className="card p-6">
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="font-semibold text-slate-800">Workflow settings</h2>
+              <h2 className="font-semibold text-slate-800 dark:text-slate-100">Workflow settings</h2>
               <StatusBadge status={status} />
             </div>
             <div className="space-y-4">
@@ -146,12 +146,12 @@ function WorkflowEditor({
               </div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <span className="text-sm font-medium text-slate-600">Status</span>
+                  <span className="text-sm font-medium text-slate-600 dark:text-slate-300">Status</span>
                   <button
                     onClick={() => setStatus(status === "active" ? "paused" : "active")}
                     className={clsx(
                       "badge cursor-pointer",
-                      status === "active" ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-600"
+                      status === "active" ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300"
                     )}
                   >
                     {status === "active" ? "Active" : "Paused"} · toggle
@@ -171,10 +171,10 @@ function WorkflowEditor({
 
           {/* Steps */}
           <div className="card">
-            <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 px-6 py-4">
               <div>
-                <h2 className="font-semibold text-slate-800">Steps</h2>
-                <p className="text-xs text-slate-400">Runs top to bottom; each step's output feeds the next.</p>
+                <h2 className="font-semibold text-slate-800 dark:text-slate-100">Steps</h2>
+                <p className="text-xs text-slate-400 dark:text-slate-500">Runs top to bottom; each step's output feeds the next.</p>
               </div>
               <button className="btn-secondary" onClick={() => setAdding((v) => !v)}>
                 <Icon name="plus" width={16} height={16} />
@@ -183,18 +183,18 @@ function WorkflowEditor({
             </div>
 
             {adding && (
-              <div className="border-b border-slate-100 bg-slate-50 p-4">
+              <div className="border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 p-4">
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                   {STEP_TYPES.map((s) => (
                     <button
                       key={s.type}
                       onClick={() => addStep.mutate(s.type)}
-                      className="flex items-start gap-3 rounded-lg border border-slate-200 bg-white p-3 text-left hover:border-brand-300 hover:bg-brand-50/40"
+                      className="flex items-start gap-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 p-3 text-left hover:border-brand-300 hover:bg-brand-50/40"
                     >
                       <span className={clsx("badge shrink-0", s.color)}>{s.category}</span>
                       <div>
-                        <p className="text-sm font-medium text-slate-800">{s.label}</p>
-                        <p className="text-xs text-slate-500">{s.description}</p>
+                        <p className="text-sm font-medium text-slate-800 dark:text-slate-100">{s.label}</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">{s.description}</p>
                       </div>
                     </button>
                   ))}
@@ -211,7 +211,7 @@ function WorkflowEditor({
                 />
               </div>
             ) : (
-              <ul className="divide-y divide-slate-100">
+              <ul className="divide-y divide-slate-100 dark:divide-slate-800">
                 {wf.steps.map((step, idx) => (
                   <StepCard
                     key={step.id}
@@ -283,16 +283,16 @@ function StepCard({
   return (
     <li className="px-6 py-4">
       <div className="flex items-center gap-3">
-        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-100 text-xs font-semibold text-slate-500">
+        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-xs font-semibold text-slate-500 dark:text-slate-400">
           {index + 1}
         </span>
         <span className={clsx("badge shrink-0", meta.color)}>{meta.label}</span>
-        <span className="min-w-0 flex-1 truncate text-sm font-medium text-slate-800">{step.name}</span>
+        <span className="min-w-0 flex-1 truncate text-sm font-medium text-slate-800 dark:text-slate-100">{step.name}</span>
         <div className="flex items-center gap-1">
           <button
             disabled={index === 0 || moving}
             onClick={() => onMove(-1)}
-            className="rounded p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 disabled:opacity-30"
+            className="rounded p-1 text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-600 disabled:opacity-30"
             title="Move up"
           >
             <Icon name="arrow-up" width={16} height={16} />
@@ -300,14 +300,14 @@ function StepCard({
           <button
             disabled={index === total - 1 || moving}
             onClick={() => onMove(1)}
-            className="rounded p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 disabled:opacity-30"
+            className="rounded p-1 text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-600 disabled:opacity-30"
             title="Move down"
           >
             <Icon name="arrow-down" width={16} height={16} />
           </button>
           <button
             onClick={() => setOpen((v) => !v)}
-            className="rounded p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+            className="rounded p-1 text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-600"
             title="Configure"
           >
             <Icon name="settings" width={16} height={16} />
@@ -323,7 +323,7 @@ function StepCard({
       </div>
 
       {open && (
-        <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-4">
+        <div className="mt-4 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 p-4">
           <StepConfigFields stepType={step.step_type} config={config} onChange={setConfig} />
           <div className="mt-4 flex justify-end">
             <button className="btn-primary" disabled={save.isPending} onClick={() => save.mutate()}>
@@ -360,12 +360,12 @@ function WebhookCard({ wf, onRefetch }: { wf: Workflow; onRefetch: () => void })
         <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
           <Icon name="webhook" width={18} height={18} />
         </span>
-        <h3 className="font-semibold text-slate-800">Webhook trigger</h3>
+        <h3 className="font-semibold text-slate-800 dark:text-slate-100">Webhook trigger</h3>
       </div>
-      <p className="text-xs text-slate-500">POST any JSON payload to this URL to run the workflow.</p>
-      <div className="mt-3 flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 p-2">
-        <code className="min-w-0 flex-1 truncate text-xs text-slate-600">{url}</code>
-        <button onClick={copy} className="rounded p-1 text-slate-400 hover:bg-slate-200 hover:text-slate-700" title="Copy">
+      <p className="text-xs text-slate-500 dark:text-slate-400">POST any JSON payload to this URL to run the workflow.</p>
+      <div className="mt-3 flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 p-2">
+        <code className="min-w-0 flex-1 truncate text-xs text-slate-600 dark:text-slate-300">{url}</code>
+        <button onClick={copy} className="rounded p-1 text-slate-400 dark:text-slate-500 hover:bg-slate-200 hover:text-slate-700 dark:hover:text-slate-200" title="Copy">
           <Icon name="copy" width={16} height={16} />
         </button>
       </div>
@@ -442,9 +442,9 @@ function RunPanel({
         <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
           <Icon name="play" width={18} height={18} />
         </span>
-        <h3 className="font-semibold text-slate-800">Run manually</h3>
+        <h3 className="font-semibold text-slate-800 dark:text-slate-100">Run manually</h3>
       </div>
-      <p className="text-xs text-slate-500">Provide a test payload (JSON or plain text).</p>
+      <p className="text-xs text-slate-500 dark:text-slate-400">Provide a test payload (JSON or plain text).</p>
       <textarea
         className="input mt-3 min-h-[160px] font-mono text-xs"
         value={input}
@@ -460,7 +460,7 @@ function RunPanel({
         {run.isPending ? "Running… (~15s on free AI)" : "Run workflow"}
       </button>
       {wf.steps.length === 0 && (
-        <p className="mt-2 text-center text-xs text-slate-400">Add at least one step to run.</p>
+        <p className="mt-2 text-center text-xs text-slate-400 dark:text-slate-500">Add at least one step to run.</p>
       )}
     </div>
   );

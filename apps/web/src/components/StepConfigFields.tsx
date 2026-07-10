@@ -14,7 +14,7 @@ function Field({ label, hint, children }: { label: string; hint?: string; childr
     <div>
       <label className="label">{label}</label>
       {children}
-      {hint && <p className="mt-1 text-xs text-slate-400">{hint}</p>}
+      {hint && <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">{hint}</p>}
     </div>
   );
 }
@@ -26,7 +26,7 @@ export function StepConfigFields({ stepType, config, onChange }: Props) {
   switch (stepType) {
     case "ai_summarize":
       return (
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-slate-500 dark:text-slate-400">
           No configuration needed. This step summarizes whatever text or JSON reaches it.
         </p>
       );
