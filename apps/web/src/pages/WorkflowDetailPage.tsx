@@ -106,6 +106,34 @@ function WorkflowEditor({
     onError: (e) => toast.error(apiError(e)),
   });
 
+  // Drag-and-drop reorder: persist the new order as sequential step_order values.
+  const reorder = useMutation({
+    mutationFn: async (orderedIds: number[]) => {
+      for (let i = 0; i < orderedIds.length; i++) {
+        const step = wf.steps.find((s) => s.id === orderedIds[i]);
+        if (step && step.step_order !== i) {
+          await workflowApi.updateStep(wf.id, step.id, { step_order: i });
+        }
+      }
+    },
+    onSuccess: onRefetch,
+    onError: (e) => toast.error(apiError(e)),
+  });
+
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const [overIndex, setOverIndex] = useState<number | null>(null);
+
+  const handleDrop = () => {
+    if (dragIndex !== null && overIndex !== null && dragIndex !== overIndex) {
+      const ids = wf.steps.map((s) => s.id);
+      const [moved] = ids.splice(dragIndex, 1);
+      ids.splice(overIndex, 0, moved);
+      reorder.mutate(ids);
+    }
+    setDragIndex(null);
+    setOverIndex(null);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -182,7 +210,7 @@ function WorkflowEditor({
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 px-6 py-4">
               <div>
                 <h2 className="font-semibold text-slate-800 dark:text-slate-100">Steps</h2>
-                <p className="text-xs text-slate-400 dark:text-slate-500">Runs top to bottom; each step's output feeds the next.</p>
+                <p className="text-xs text-slate-400 dark:text-slate-500">Runs top to bottom; drag to reorder. Each step's output feeds the next.</p>
               </div>
               <button className="btn-secondary" onClick={() => setAdding((v) => !v)}>
                 <Icon name="plus" width={16} height={16} />
@@ -230,6 +258,15 @@ function WorkflowEditor({
                     onChanged={onRefetch}
                     onMove={(dir) => moveStep.mutate({ index: idx, dir })}
                     moving={moveStep.isPending}
+                    dragging={dragIndex === idx}
+                    isOver={overIndex === idx && dragIndex !== idx}
+                    onDragStart={() => setDragIndex(idx)}
+                    onDragOver={() => setOverIndex(idx)}
+                    onDrop={handleDrop}
+                    onDragEnd={() => {
+                      setDragIndex(null);
+                      setOverIndex(null);
+                    }}
                   />
                 ))}
               </ul>
@@ -255,6 +292,12 @@ function StepCard({
   onChanged,
   onMove,
   moving,
+  dragging,
+  isOver,
+  onDragStart,
+  onDragOver,
+  onDrop,
+  onDragEnd,
 }: {
   step: WorkflowStep;
   index: number;
@@ -263,6 +306,12 @@ function StepCard({
   onChanged: () => void;
   onMove: (dir: -1 | 1) => void;
   moving: boolean;
+  dragging: boolean;
+  isOver: boolean;
+  onDragStart: () => void;
+  onDragOver: () => void;
+  onDrop: () => void;
+  onDragEnd: () => void;
 }) {
   const confirm = useConfirm();
   const [open, setOpen] = useState(false);
@@ -290,8 +339,30 @@ function StepCard({
   });
 
   return (
-    <li className="px-6 py-4">
-      <div className="flex items-center gap-3">
+    <li
+      onDragOver={(e) => {
+        e.preventDefault();
+        onDragOver();
+      }}
+      onDrop={onDrop}
+      className={clsx(
+        "px-6 py-4 transition-colors",
+        dragging && "opacity-40",
+        isOver && "bg-brand-50/60 dark:bg-brand-500/10"
+      )}
+    >
+      <div
+        draggable
+        onDragStart={onDragStart}
+        onDragEnd={onDragEnd}
+        className="flex items-center gap-3"
+      >
+        <span
+          className="hidden cursor-grab text-slate-300 hover:text-slate-500 active:cursor-grabbing dark:text-slate-600 dark:hover:text-slate-400 sm:block"
+          title="Drag to reorder"
+        >
+          <Icon name="grip" width={16} height={16} />
+        </span>
         <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-xs font-semibold text-slate-500 dark:text-slate-400">
           {index + 1}
         </span>

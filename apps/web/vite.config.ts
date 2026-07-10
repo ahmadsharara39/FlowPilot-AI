@@ -14,4 +14,18 @@ export default defineConfig({
       },
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        // Split heavy/stable vendors into their own chunks so the initial
+        // bundle stays small and the big charting lib only loads with the
+        // dashboard route (which is itself lazy-loaded).
+        manualChunks: {
+          "react-vendor": ["react", "react-dom", "react-router-dom"],
+          "charts": ["recharts"],
+          "data": ["@tanstack/react-query", "axios"],
+        },
+      },
+    },
+  },
 });
