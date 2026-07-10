@@ -5,6 +5,9 @@ from functools import lru_cache
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+# Sentinel placeholder — must be overridden with a real key in production.
+_DEFAULT_SECRET = "change-me-in-production-please-use-a-long-random-string"
+
 
 class Settings(BaseSettings):
     """Central settings object. Values come from environment / .env file."""
@@ -22,7 +25,7 @@ class Settings(BaseSettings):
     cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173"
 
     # Security
-    secret_key: str = "change-me-in-production-please-use-a-long-random-string"
+    secret_key: str = _DEFAULT_SECRET
     access_token_expire_minutes: int = 1440
     jwt_algorithm: str = "HS256"
 
@@ -37,6 +40,15 @@ class Settings(BaseSettings):
     ai_provider: str = "mock"  # openrouter | mock
     ai_model: str = ""
     openrouter_api_key: str = ""
+
+    def model_post_init(self, _context) -> None:
+        # Fail fast if a real deployment is still using the placeholder JWT key,
+        # which would let anyone forge tokens.
+        if self.environment.lower() == "production" and self.secret_key == _DEFAULT_SECRET:
+            raise ValueError(
+                "SECRET_KEY is still the insecure default in production. "
+                "Set a strong random SECRET_KEY environment variable."
+            )
 
     @property
     def cors_origins_list(self) -> list[str]:

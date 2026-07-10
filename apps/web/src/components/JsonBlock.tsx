@@ -20,8 +20,9 @@ export function JsonBlock({ value, className }: { value: unknown; className?: st
     <div className="group relative">
       <button
         onClick={copy}
-        className="absolute right-2 top-2 z-10 flex items-center gap-1 rounded-md bg-slate-700/70 px-2 py-1 text-[11px] font-medium text-slate-100 opacity-0 transition-opacity hover:bg-slate-600 group-hover:opacity-100"
+        className="absolute right-2 top-2 z-10 flex items-center gap-1 rounded-md bg-slate-700/70 px-2 py-1 text-[11px] font-medium text-slate-100 opacity-60 transition-opacity hover:bg-slate-600 hover:opacity-100 focus-visible:opacity-100 group-hover:opacity-100"
         title="Copy JSON"
+        aria-label="Copy JSON to clipboard"
       >
         <Icon name={copied ? "check" : "copy"} width={13} height={13} />
         {copied ? "Copied" : "Copy"}

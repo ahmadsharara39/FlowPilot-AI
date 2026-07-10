@@ -38,20 +38,24 @@ export default function LoginPage() {
     <AuthShell title="Sign in to FlowPilot AI" subtitle="Automate anything with AI-powered workflows.">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
-          <label className="label">Email</label>
+          <label htmlFor="email" className="label">Email</label>
           <input
+            id="email"
             className="input"
             type="email"
+            autoComplete="email"
             placeholder="you@example.com"
             {...register("email", { required: "Email is required" })}
           />
           {errors.email && <p className="mt-1 text-xs text-red-600">{errors.email.message}</p>}
         </div>
         <div>
-          <label className="label">Password</label>
+          <label htmlFor="password" className="label">Password</label>
           <input
+            id="password"
             className="input"
             type="password"
+            autoComplete="current-password"
             placeholder="••••••••"
             {...register("password", { required: "Password is required" })}
           />

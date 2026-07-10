@@ -22,7 +22,7 @@ const DOT: Record<string, string> = {
 
 export function StatusBadge({ status }: { status: string }) {
   return (
-    <span className={clsx("badge", STYLES[status] ?? FALLBACK)}>
+    <span className={clsx("badge capitalize", STYLES[status] ?? FALLBACK)}>
       <span className={clsx("h-1.5 w-1.5 rounded-full", DOT[status] ?? "bg-slate-400")} />
       {status}
     </span>

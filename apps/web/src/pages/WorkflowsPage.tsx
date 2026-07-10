@@ -4,12 +4,14 @@ import { workflowApi } from "../api/endpoints";
 import { StatusBadge } from "../components/StatusBadge";
 import { SkeletonCard } from "../components/Skeleton";
 import { EmptyState } from "../components/EmptyState";
+import { ErrorState } from "../components/ErrorState";
 import { Icon } from "../components/Icon";
+import { apiError } from "../api/client";
 import { formatDate } from "../utils/format";
 
 export default function WorkflowsPage() {
   const navigate = useNavigate();
-  const { data, isLoading } = useQuery({ queryKey: ["workflows"], queryFn: workflowApi.list });
+  const { data, isLoading, isError, error, refetch } = useQuery({ queryKey: ["workflows"], queryFn: workflowApi.list });
 
   return (
     <div className="space-y-6">
@@ -30,6 +32,12 @@ export default function WorkflowsPage() {
             <SkeletonCard key={i} />
           ))}
         </div>
+      ) : isError ? (
+        <ErrorState
+          title="Couldn't load workflows"
+          description={apiError(error, "Please try again.")}
+          onRetry={() => refetch()}
+        />
       ) : !data || data.length === 0 ? (
         <EmptyState
           icon="🛠️"

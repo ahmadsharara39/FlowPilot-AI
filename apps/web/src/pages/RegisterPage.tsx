@@ -39,29 +39,35 @@ export default function RegisterPage() {
     <AuthShell title="Create your account" subtitle="Start building AI workflows in minutes.">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
-          <label className="label">Name</label>
+          <label htmlFor="name" className="label">Name</label>
           <input
+            id="name"
             className="input"
+            autoComplete="name"
             placeholder="Ada Lovelace"
             {...register("name", { required: "Name is required" })}
           />
           {errors.name && <p className="mt-1 text-xs text-red-600">{errors.name.message}</p>}
         </div>
         <div>
-          <label className="label">Email</label>
+          <label htmlFor="email" className="label">Email</label>
           <input
+            id="email"
             className="input"
             type="email"
+            autoComplete="email"
             placeholder="you@example.com"
             {...register("email", { required: "Email is required" })}
           />
           {errors.email && <p className="mt-1 text-xs text-red-600">{errors.email.message}</p>}
         </div>
         <div>
-          <label className="label">Password</label>
+          <label htmlFor="password" className="label">Password</label>
           <input
+            id="password"
             className="input"
             type="password"
+            autoComplete="new-password"
             placeholder="At least 6 characters"
             {...register("password", {
               required: "Password is required",

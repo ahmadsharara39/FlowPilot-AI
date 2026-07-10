@@ -7,6 +7,7 @@ import { workflowApi } from "../api/endpoints";
 import { apiError, webhookUrl } from "../api/client";
 import { LoadingScreen, Spinner } from "../components/Spinner";
 import { EmptyState } from "../components/EmptyState";
+import { ErrorState } from "../components/ErrorState";
 import { Icon } from "../components/Icon";
 import { StatusBadge } from "../components/StatusBadge";
 import { StepConfigFields } from "../components/StepConfigFields";
@@ -21,15 +22,40 @@ export default function WorkflowDetailPage() {
   const navigate = useNavigate();
   const qc = useQueryClient();
 
-  const { data: wf, isLoading } = useQuery({
+  const { data: wf, isLoading, isError, error, refetch } = useQuery({
     queryKey: ["workflow", workflowId],
     queryFn: () => workflowApi.get(workflowId),
     enabled: Number.isFinite(workflowId),
   });
 
-  if (isLoading || !wf) return <LoadingScreen />;
+  if (isLoading) return <LoadingScreen />;
+  if (isError || !wf) {
+    return (
+      <div className="space-y-4">
+        <Link to="/workflows" className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200">
+          ← Back to workflows
+        </Link>
+        <ErrorState
+          title="Couldn't load this workflow"
+          description={apiError(error, "It may have been deleted, or the link is invalid.")}
+          onRetry={() => refetch()}
+        />
+      </div>
+    );
+  }
 
-  return <WorkflowEditor wf={wf} onRefetch={() => qc.invalidateQueries({ queryKey: ["workflow", workflowId] })} navigate={navigate} qc={qc} />;
+  return (
+    <WorkflowEditor
+      wf={wf}
+      onRefetch={() => {
+        // Refresh this workflow AND the list (step_count changes with edits).
+        qc.invalidateQueries({ queryKey: ["workflow", workflowId] });
+        qc.invalidateQueries({ queryKey: ["workflows"] });
+      }}
+      navigate={navigate}
+      qc={qc}
+    />
+  );
 }
 
 function WorkflowEditor({
@@ -73,7 +99,9 @@ function WorkflowEditor({
         step_type: type,
         name: stepMeta(type).label,
         config: defaultConfig(type),
-        step_order: wf.steps.length,
+        // Use max(step_order)+1, not length — a deleted middle step would
+        // otherwise make a new step collide with an existing step_order.
+        step_order: wf.steps.reduce((m, s) => Math.max(m, s.step_order), -1) + 1,
       }),
     onSuccess: () => {
       onRefetch();
@@ -86,7 +114,10 @@ function WorkflowEditor({
   const removeWorkflow = useMutation({
     mutationFn: () => workflowApi.remove(wf.id),
     onSuccess: () => {
+      // Deleting a workflow cascades to its executions, so refresh those too.
       qc.invalidateQueries({ queryKey: ["workflows"] });
+      qc.invalidateQueries({ queryKey: ["executions"] });
+      qc.invalidateQueries({ queryKey: ["dashboard-stats"] });
       toast.success("Workflow deleted");
       navigate("/workflows");
     },
@@ -225,7 +256,8 @@ function WorkflowEditor({
                     <button
                       key={s.type}
                       onClick={() => addStep.mutate(s.type)}
-                      className="flex items-start gap-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 p-3 text-left hover:border-brand-300 hover:bg-brand-50/40"
+                      disabled={addStep.isPending}
+                      className="flex items-start gap-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 p-3 text-left hover:border-brand-300 hover:bg-brand-50/40 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       <span className={clsx("badge shrink-0", s.color)}>{s.category}</span>
                       <div>
@@ -426,6 +458,7 @@ function StepCard({
 }
 
 function WebhookCard({ wf, onRefetch }: { wf: Workflow; onRefetch: () => void }) {
+  const confirm = useConfirm();
   const url = wf.webhook_token ? webhookUrl(wf.webhook_token) : "";
 
   const regenerate = useMutation({
@@ -442,6 +475,16 @@ function WebhookCard({ wf, onRefetch }: { wf: Workflow; onRefetch: () => void })
     toast.success("Webhook URL copied");
   };
 
+  const onRegenerate = async () => {
+    const ok = await confirm({
+      title: "Regenerate webhook token?",
+      message: "The current URL will stop working immediately. Anything using it must be updated.",
+      confirmLabel: "Regenerate",
+      danger: true,
+    });
+    if (ok) regenerate.mutate();
+  };
+
   return (
     <div className="card p-5">
       <div className="mb-3 flex items-center gap-2">
@@ -453,13 +496,14 @@ function WebhookCard({ wf, onRefetch }: { wf: Workflow; onRefetch: () => void })
       <p className="text-xs text-slate-500 dark:text-slate-400">POST any JSON payload to this URL to run the workflow.</p>
       <div className="mt-3 flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 p-2">
         <code className="min-w-0 flex-1 truncate text-xs text-slate-600 dark:text-slate-300">{url}</code>
-        <button onClick={copy} className="rounded p-1 text-slate-400 dark:text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-slate-700 dark:hover:text-slate-200" title="Copy">
+        <button onClick={copy} className="rounded p-1 text-slate-400 dark:text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-slate-700 dark:hover:text-slate-200" title="Copy" aria-label="Copy webhook URL">
           <Icon name="copy" width={16} height={16} />
         </button>
       </div>
       <button
-        onClick={() => regenerate.mutate()}
-        className="mt-3 text-xs font-medium text-brand-600 hover:text-brand-700"
+        onClick={onRegenerate}
+        disabled={regenerate.isPending}
+        className="mt-3 text-xs font-medium text-brand-600 hover:text-brand-700 disabled:opacity-50"
       >
         Regenerate token
       </button>
@@ -503,7 +547,12 @@ function RunPanel({
     onSuccess: (execution) => {
       qc.invalidateQueries({ queryKey: ["executions"] });
       qc.invalidateQueries({ queryKey: ["dashboard-stats"] });
-      toast.success(`Execution ${execution.status}`);
+      // A completed run can still have failed — don't show a green success toast.
+      if (execution.status === "failed") {
+        toast.error("Workflow run failed — see the execution logs.");
+      } else {
+        toast.success(`Execution ${execution.status}`);
+      }
       navigate(`/executions/${execution.id}`);
     },
     onError: (e) => toast.error(apiError(e, (e as Error).message)),
@@ -537,6 +586,8 @@ function RunPanel({
         className="input mt-3 min-h-[160px] font-mono text-xs"
         value={input}
         onChange={(e) => validate(e.target.value)}
+        aria-label="Workflow test input payload (JSON or text)"
+        spellCheck={false}
       />
       {jsonError && <p className="mt-1 text-xs text-red-600">{jsonError}</p>}
       <button

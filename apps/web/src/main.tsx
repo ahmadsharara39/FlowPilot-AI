@@ -7,6 +7,7 @@ import App from "./App";
 import { AuthProvider } from "./hooks/useAuth";
 import { ConfirmProvider } from "./hooks/useConfirm";
 import { SlowRequestBanner } from "./components/SlowRequestBanner";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 import { initTheme } from "./hooks/useTheme";
 import "./index.css";
 
@@ -20,16 +21,18 @@ const queryClient = new QueryClient({
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <AuthProvider>
-          <ConfirmProvider>
-            <App />
-            <SlowRequestBanner />
-            <Toaster position="top-right" toastOptions={{ duration: 4000 }} />
-          </ConfirmProvider>
-        </AuthProvider>
-      </BrowserRouter>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
+          <AuthProvider>
+            <ConfirmProvider>
+              <App />
+              <SlowRequestBanner />
+              <Toaster position="top-right" toastOptions={{ duration: 4000 }} />
+            </ConfirmProvider>
+          </AuthProvider>
+        </BrowserRouter>
+      </QueryClientProvider>
+    </ErrorBoundary>
   </React.StrictMode>
 );

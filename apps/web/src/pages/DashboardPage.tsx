@@ -17,6 +17,7 @@ import { StatusBadge } from "../components/StatusBadge";
 import { Spinner } from "../components/Spinner";
 import { Skeleton, SkeletonCard } from "../components/Skeleton";
 import { EmptyState } from "../components/EmptyState";
+import { ErrorState } from "../components/ErrorState";
 import { Icon } from "../components/Icon";
 import { formatDate, formatRelative } from "../utils/format";
 import { DEMO_WORKFLOW_NAME, ensureDemoWorkflow, DEMO_INPUT } from "../utils/demo";
@@ -71,7 +72,11 @@ export default function DashboardPage() {
       qc.invalidateQueries({ queryKey: ["dashboard-stats"] });
       qc.invalidateQueries({ queryKey: ["executions"] });
       qc.invalidateQueries({ queryKey: ["workflows"] });
-      toast.success("Demo workflow executed!");
+      if (execution.status === "failed") {
+        toast.error("Demo run failed — see the execution logs.");
+      } else {
+        toast.success("Demo workflow executed!");
+      }
       navigate(`/executions/${execution.id}`);
     },
     onError: (e) => toast.error(apiError(e, "Could not run demo workflow")),
@@ -96,7 +101,17 @@ export default function DashboardPage() {
     );
   }
 
-  const s = stats.data!;
+  if (stats.isError || !stats.data) {
+    return (
+      <ErrorState
+        title="Couldn't load your dashboard"
+        description={apiError(stats.error, "Failed to load dashboard stats.")}
+        onRetry={() => stats.refetch()}
+      />
+    );
+  }
+
+  const s = stats.data;
   const recent = executions.data?.slice(0, 6) ?? [];
 
   return (
@@ -192,8 +207,17 @@ export default function DashboardPage() {
                   {recent.map((ex) => (
                     <tr
                       key={ex.id}
-                      className="cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                      className="cursor-pointer hover:bg-slate-50 focus-visible:bg-slate-50 dark:hover:bg-slate-800/50 dark:focus-visible:bg-slate-800/50"
+                      role="button"
+                      tabIndex={0}
+                      aria-label={`Open execution ${ex.id} for ${ex.workflow_name}`}
                       onClick={() => navigate(`/executions/${ex.id}`)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          navigate(`/executions/${ex.id}`);
+                        }
+                      }}
                     >
                       <td className="px-5 py-3 font-medium text-slate-800 dark:text-slate-100">{ex.workflow_name}</td>
                       <td className="px-5 py-3">

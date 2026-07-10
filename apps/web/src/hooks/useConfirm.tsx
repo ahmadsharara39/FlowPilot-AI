@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 import clsx from "clsx";
 
 interface ConfirmOptions {
@@ -31,6 +31,19 @@ export function ConfirmProvider({ children }: { children: ReactNode }) {
     setState(null);
   };
 
+  // Close on Escape while a dialog is open.
+  useEffect(() => {
+    if (!state) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        state.resolve(false);
+        setState(null);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [state]);
+
   return (
     <ConfirmContext.Provider value={confirm}>
       {children}
@@ -42,12 +55,18 @@ export function ConfirmProvider({ children }: { children: ReactNode }) {
           <div
             className="card w-full max-w-sm p-6 shadow-xl"
             onClick={(e) => e.stopPropagation()}
-            role="dialog"
+            role="alertdialog"
             aria-modal="true"
+            aria-labelledby="confirm-title"
+            aria-describedby={state.opts.message ? "confirm-desc" : undefined}
           >
-            <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{state.opts.title}</h3>
+            <h3 id="confirm-title" className="text-lg font-semibold text-slate-900 dark:text-white">
+              {state.opts.title}
+            </h3>
             {state.opts.message && (
-              <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">{state.opts.message}</p>
+              <p id="confirm-desc" className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+                {state.opts.message}
+              </p>
             )}
             <div className="mt-6 flex justify-end gap-2">
               <button className="btn-secondary" onClick={() => close(false)}>

@@ -4,12 +4,14 @@ import { executionApi } from "../api/endpoints";
 import { StatusBadge } from "../components/StatusBadge";
 import { SkeletonRows } from "../components/Skeleton";
 import { EmptyState } from "../components/EmptyState";
+import { ErrorState } from "../components/ErrorState";
 import { Icon } from "../components/Icon";
+import { apiError } from "../api/client";
 import { durationMs, formatDate, formatRelative } from "../utils/format";
 
 export default function ExecutionsPage() {
   const navigate = useNavigate();
-  const { data, isLoading } = useQuery({ queryKey: ["executions"], queryFn: () => executionApi.list() });
+  const { data, isLoading, isError, error, refetch } = useQuery({ queryKey: ["executions"], queryFn: () => executionApi.list() });
 
   if (isLoading) {
     return (
@@ -30,7 +32,13 @@ export default function ExecutionsPage() {
         <p className="text-sm text-slate-500 dark:text-slate-400">Every workflow run, with status and timing.</p>
       </div>
 
-      {!data || data.length === 0 ? (
+      {isError ? (
+        <ErrorState
+          title="Couldn't load executions"
+          description={apiError(error, "Please try again.")}
+          onRetry={() => refetch()}
+        />
+      ) : !data || data.length === 0 ? (
         <EmptyState
           icon="⚡"
           title="No executions yet"
@@ -54,8 +62,17 @@ export default function ExecutionsPage() {
                 {data.map((ex) => (
                   <tr
                     key={ex.id}
-                    className="cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                    className="cursor-pointer hover:bg-slate-50 focus-visible:bg-slate-50 dark:hover:bg-slate-800/50 dark:focus-visible:bg-slate-800/50"
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`Open execution ${ex.id} for ${ex.workflow_name}`}
                     onClick={() => navigate(`/executions/${ex.id}`)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        navigate(`/executions/${ex.id}`);
+                      }
+                    }}
                   >
                     <td className="px-5 py-3 font-mono text-xs text-slate-400 dark:text-slate-500">#{ex.id}</td>
                     <td className="px-5 py-3 font-medium text-slate-800 dark:text-slate-100">{ex.workflow_name}</td>

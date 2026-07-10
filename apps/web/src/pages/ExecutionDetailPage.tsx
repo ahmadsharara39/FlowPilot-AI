@@ -2,8 +2,10 @@ import { Link, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
 import { executionApi } from "../api/endpoints";
+import { apiError } from "../api/client";
 import { LoadingScreen } from "../components/Spinner";
 import { StatusBadge } from "../components/StatusBadge";
+import { ErrorState } from "../components/ErrorState";
 import { JsonBlock } from "../components/JsonBlock";
 import { Icon } from "../components/Icon";
 import { stepMeta } from "../utils/stepMeta";
@@ -13,13 +15,27 @@ import type { StepLog } from "../types";
 export default function ExecutionDetailPage() {
   const { id } = useParams();
   const executionId = Number(id);
-  const { data: ex, isLoading } = useQuery({
+  const { data: ex, isLoading, isError, error, refetch } = useQuery({
     queryKey: ["execution", executionId],
     queryFn: () => executionApi.get(executionId),
     enabled: Number.isFinite(executionId),
   });
 
-  if (isLoading || !ex) return <LoadingScreen />;
+  if (isLoading) return <LoadingScreen />;
+  if (isError || !ex) {
+    return (
+      <div className="space-y-4">
+        <Link to="/executions" className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200">
+          ← Back to executions
+        </Link>
+        <ErrorState
+          title="Couldn't load this execution"
+          description={apiError(error, "It may have been deleted, or the link is invalid.")}
+          onRetry={() => refetch()}
+        />
+      </div>
+    );
+  }
 
   const logs = ex.step_logs ?? [];
 
